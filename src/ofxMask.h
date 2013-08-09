@@ -8,11 +8,11 @@ class ofxMask
 public:
 	void setup(int width, int height);
 
-	void beginMask();
+	void beginMask(bool clear=true);
 	void endMask();
 	void clearMask();
 
-	void begin();
+	void begin(bool clear=true);
 	void end();
 
 	void draw();

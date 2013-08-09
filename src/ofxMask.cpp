@@ -49,9 +49,12 @@ void ofxMask::setup(int width, int height)
 	shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
 	shader_.linkProgram();	}
 
-void ofxMask::beginMask()
+void ofxMask::beginMask(bool clear)
 {
 	masker_.begin();
+	if(clear) {
+		ofClear(0);
+	}
 }
 
 void ofxMask::endMask()
@@ -66,10 +69,12 @@ void ofxMask::clearMask()
 	masker_.end();
 }
 
-void ofxMask::begin()
+void ofxMask::begin(bool clear)
 {
 	maskee_.begin();
-	ofClear(0);
+	if(clear) {
+		ofClear(0);
+	}
 }
 
 void ofxMask::end()
