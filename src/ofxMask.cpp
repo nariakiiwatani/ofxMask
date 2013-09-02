@@ -31,7 +31,7 @@ void ofxMask::setup(int width, int height)
 	if(arb) {
 		ofDisableArbTex();
 	}
-	masker_.allocate(width, height, GL_LUMINANCE);
+	masker_.allocate(width, height, GL_RGB);
 	maskee_.allocate(width, height, GL_RGBA);
 	if(arb) {
 		ofEnableArbTex();
@@ -47,7 +47,8 @@ void ofxMask::setup(int width, int height)
 	"	gl_FragColor.a *= texture2D(masker, gl_TexCoord[0].st).r;"
 	"}";
 	shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
-	shader_.linkProgram();	}
+	shader_.linkProgram();
+}
 
 void ofxMask::beginMask(bool clear)
 {
@@ -94,6 +95,15 @@ void ofxMask::draw()
 	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	shader_.end();
+}
+
+void ofxMask::drawMasker()
+{
+	masker_.draw(0,0,masker_.getWidth(),masker_.getHeight());
+}
+void ofxMask::drawMaskee()
+{
+	maskee_.draw(0,0,maskee_.getWidth(),maskee_.getHeight());
 }
 
 /* EOF */

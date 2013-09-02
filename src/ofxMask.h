@@ -16,6 +16,9 @@ public:
 	void end();
 
 	void draw();
+	
+	void drawMasker();
+	void drawMaskee();
 
 private:
 	ofFbo masker_, maskee_;
