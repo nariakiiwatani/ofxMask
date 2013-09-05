@@ -1,6 +1,6 @@
 ofxMask
 ======================
-an easy way to masking
+an easy way to mask
 
 
 how to use
