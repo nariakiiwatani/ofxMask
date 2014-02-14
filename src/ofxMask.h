@@ -6,7 +6,12 @@
 class ofxMask
 {
 public:
-	void setup(int width, int height);
+	enum Type
+	{
+		ALPHA,
+		LUMINANCE
+	};
+	void setup(int width, int height, Type type);
 
 	void beginMask(bool clear=true);
 	void endMask();
@@ -21,7 +26,7 @@ public:
 	void drawMaskee();
 
 private:
-	ofFbo masker_, maskee_;
+	ofFbo masker_, maskee_, final_;
 	ofShader shader_;
 	float vertices_[8];
 	float tex_coords_[8];
