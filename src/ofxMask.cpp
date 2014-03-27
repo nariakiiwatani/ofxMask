@@ -47,7 +47,7 @@ void ofxMask::setup(int width, int height, Type type)
 								   void main()
 								   {
 									   gl_FragColor = texture2DRect(maskee, gl_TexCoord[0].st);
-									   gl_FragColor.a = sqrt(gl_FragColor.a*texture2DRect(masker, gl_TexCoord[0].st).a);
+									   gl_FragColor.a *= texture2DRect(masker, gl_TexCoord[0].st).a;
 								   }
 								   );
 			shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
@@ -71,7 +71,6 @@ void ofxMask::setup(int width, int height, Type type)
 	}
 #undef _S
 	maskee_.allocate(width, height, GL_RGBA);
-	final_.allocate(width, height, GL_RGBA);
 	makeTexCoords(tex_coords_, masker_.getTextureReference().getTextureData());
 	makeVertices(vertices_, masker_.getTextureReference().getTextureData());
 }
@@ -111,8 +110,6 @@ void ofxMask::end()
 
 void ofxMask::draw()
 {
-	final_.begin();
-	ofClear(0);
 	shader_.begin();
 	shader_.setUniformTexture("masker", masker_, 0);
 	shader_.setUniformTexture("maskee", maskee_, 1);
@@ -123,12 +120,6 @@ void ofxMask::draw()
 	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	shader_.end();
-	final_.end();
-	ofPushStyle();
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
-	final_.draw(0,0);
-	ofPopStyle();
 }
 
 void ofxMask::drawMasker()

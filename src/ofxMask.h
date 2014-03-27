@@ -26,7 +26,7 @@ public:
 	void drawMaskee();
 
 private:
-	ofFbo masker_, maskee_, final_;
+	ofFbo masker_, maskee_;
 	ofShader shader_;
 	float vertices_[8];
 	float tex_coords_[8];
