@@ -48,6 +48,7 @@ void ofxMask::setup(int width, int height, Type type)
 								   {
 									   gl_FragColor = texture2DRect(maskee, gl_TexCoord[0].st);
 									   gl_FragColor.a *= texture2DRect(masker, gl_TexCoord[0].st).a;
+									   gl_FragColor.a = sqrt(gl_FragColor.a);
 								   }
 								   );
 			shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
@@ -63,6 +64,7 @@ void ofxMask::setup(int width, int height, Type type)
 									   gl_FragColor = texture2DRect(maskee, gl_TexCoord[0].st);
 									   vec4 rgb = texture2DRect(masker, gl_TexCoord[0].st);
 									   gl_FragColor.a *= 0.298912*rgb.r + 0.586611*rgb.g + 0.114478*rgb.b;
+									   gl_FragColor.a = sqrt(gl_FragColor.a);
 								   }
 								   );
 			shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
