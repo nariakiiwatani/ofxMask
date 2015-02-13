@@ -12,6 +12,8 @@ public:
 		LUMINANCE
 	};
 	void setup(int width, int height, Type type);
+	int getWidth() { return width_; }
+	int getHeight() { return height_; }
 
 	void beginMask(bool clear=true);
 	void endMask();
@@ -30,6 +32,7 @@ private:
 	ofShader shader_;
 	float vertices_[8];
 	float tex_coords_[8];
+	float width_, height_;
 };
 
 /* EOF */
