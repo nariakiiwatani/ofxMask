@@ -48,7 +48,7 @@ void ofxMask::setup(int width, int height, Type type)
 								   {
 									   gl_FragColor = texture2DRect(maskee, gl_TexCoord[0].st);
 									   gl_FragColor.a *= texture2DRect(masker, gl_TexCoord[0].st).a;
-									   gl_FragColor.a = sqrt(gl_FragColor.a);
+									   gl_FragColor.a = gl_FragColor.a;
 								   }
 								   );
 			shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
@@ -64,7 +64,7 @@ void ofxMask::setup(int width, int height, Type type)
 									   gl_FragColor = texture2DRect(maskee, gl_TexCoord[0].st);
 									   vec4 rgb = texture2DRect(masker, gl_TexCoord[0].st);
 									   gl_FragColor.a *= 0.298912*rgb.r + 0.586611*rgb.g + 0.114478*rgb.b;
-									   gl_FragColor.a = sqrt(gl_FragColor.a);
+									   gl_FragColor.a = gl_FragColor.a;
 								   }
 								   );
 			shader_.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
@@ -114,6 +114,8 @@ void ofxMask::end()
 
 void ofxMask::draw()
 {
+	ofPushStyle();
+	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	shader_.begin();
 	shader_.setUniformTexture("masker", masker_, 0);
 	shader_.setUniformTexture("maskee", maskee_, 1);
@@ -124,15 +126,22 @@ void ofxMask::draw()
 	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	shader_.end();
+	ofPopStyle();
 }
 
 void ofxMask::drawMasker()
 {
+	ofPushStyle();
+	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	masker_.draw(0,0,masker_.getWidth(),masker_.getHeight());
+	ofPopStyle();
 }
 void ofxMask::drawMaskee()
 {
+	ofPushStyle();
+	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	maskee_.draw(0,0,maskee_.getWidth(),maskee_.getHeight());
+	ofPopStyle();
 }
 
 /* EOF */
