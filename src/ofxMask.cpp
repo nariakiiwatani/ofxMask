@@ -73,8 +73,8 @@ void ofxMask::setup(int width, int height, Type type)
 	width_ = width;
 	height_ = height;
 	maskee_.allocate(width, height, GL_RGBA);
-	makeTexCoords(tex_coords_, masker_.getTextureReference().getTextureData());
-	makeVertices(vertices_, masker_.getTextureReference().getTextureData());
+	makeTexCoords(tex_coords_, masker_.getTexture().getTextureData());
+	makeVertices(vertices_, masker_.getTexture().getTextureData());
 }
 
 void ofxMask::beginMask(bool clear)

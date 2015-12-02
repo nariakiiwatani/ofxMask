@@ -27,8 +27,8 @@ public:
 	void drawMasker();
 	void drawMaskee();
 
-	ofTexture& getMaskerTextureReference() { return masker_.getTextureReference(); }
-	ofTexture& getMaskeeTextureReference() { return maskee_.getTextureReference(); }
+	ofTexture& getMaskerTexture() { return masker_.getTexture(); }
+	ofTexture& getMaskeeTexture() { return maskee_.getTexture(); }
 
 private:
 	ofFbo masker_, maskee_;
