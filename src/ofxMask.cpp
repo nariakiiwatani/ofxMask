@@ -40,7 +40,6 @@ void ofxMask::setup(int width, int height, Type type)
 #define _S(a) #a
 	switch(type) {
 		case ALPHA: {
-			masker_.allocate(width, height, GL_RGBA);
 			string shader_src = _S(
 								   uniform sampler2DRect masker;
 								   uniform sampler2DRect maskee;
@@ -54,7 +53,6 @@ void ofxMask::setup(int width, int height, Type type)
 			shader_.linkProgram();
 		}	break;
 		case LUMINANCE: {
-			masker_.allocate(width, height, GL_RGB);
 			string shader_src = _S(
 								   uniform sampler2DRect masker;
 								   uniform sampler2DRect maskee;
@@ -70,16 +68,21 @@ void ofxMask::setup(int width, int height, Type type)
 		}	break;
 	}
 #undef _S
-	width_ = width;
-	height_ = height;
-	maskee_.allocate(width, height, GL_RGBA);
-	makeTexCoords(tex_coords_, masker_.getTexture().getTextureData());
-	makeVertices(vertices_, masker_.getTexture().getTextureData());
+	ofFbo::Settings s;
+	s.width = width;
+	s.height = height;
+	s.numColorbuffers = 2;
+	s.colorFormats = {GL_RGBA, GL_RGBA};
+	s.internalformat = GL_RGBA;
+	fbo_.allocate(s);
+	makeTexCoords(tex_coords_, fbo_.getTexture().getTextureData());
+	makeVertices(vertices_, fbo_.getTexture().getTextureData());
 }
 
 void ofxMask::beginMask(bool clear)
 {
-	masker_.begin();
+	fbo_.begin();
+	fbo_.setActiveDrawBuffer(BufferIndex::MASKER);
 	if(clear) {
 		ofClear(0);
 	}
@@ -87,19 +90,21 @@ void ofxMask::beginMask(bool clear)
 
 void ofxMask::endMask()
 {
-	masker_.end();
+	fbo_.end();
 }
 
 void ofxMask::clearMask()
 {
-	masker_.begin();
+	fbo_.begin();
+	fbo_.setActiveDrawBuffer(BufferIndex::MASKER);
 	ofClear(0);
-	masker_.end();
+	fbo_.end();
 }
 
 void ofxMask::begin(bool clear)
 {
-	maskee_.begin();
+	fbo_.begin();
+	fbo_.setActiveDrawBuffer(BufferIndex::MASKEE);
 	if(clear) {
 		ofClear(0);
 	}
@@ -107,7 +112,7 @@ void ofxMask::begin(bool clear)
 
 void ofxMask::end()
 {
-	maskee_.end();
+	fbo_.end();
 }
 
 void ofxMask::draw()
@@ -115,8 +120,8 @@ void ofxMask::draw()
 	ofPushStyle();
 	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	shader_.begin();
-	shader_.setUniformTexture("masker", masker_, 0);
-	shader_.setUniformTexture("maskee", maskee_, 1);
+	shader_.setUniformTexture("masker", getMaskerTexture(), 0);
+	shader_.setUniformTexture("maskee", getMaskeeTexture(), 1);
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_ );
 	glEnableClientState(GL_VERTEX_ARRAY);		
@@ -130,15 +135,17 @@ void ofxMask::draw()
 void ofxMask::drawMasker()
 {
 	ofPushStyle();
+	fbo_.setDefaultTextureIndex(BufferIndex::MASKER);
 	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	masker_.draw(0,0,masker_.getWidth(),masker_.getHeight());
+	fbo_.draw(0,0,fbo_.getWidth(),fbo_.getHeight());
 	ofPopStyle();
 }
 void ofxMask::drawMaskee()
 {
 	ofPushStyle();
+	fbo_.setDefaultTextureIndex(BufferIndex::MASKEE);
 	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	maskee_.draw(0,0,maskee_.getWidth(),maskee_.getHeight());
+	fbo_.draw(0,0,fbo_.getWidth(),fbo_.getHeight());
 	ofPopStyle();
 }
 

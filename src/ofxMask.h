@@ -11,9 +11,10 @@ public:
 		ALPHA,
 		LUMINANCE
 	};
+	void allocate(int width, int height, Type type);
 	void setup(int width, int height, Type type);
-	int getWidth() { return width_; }
-	int getHeight() { return height_; }
+	int getWidth() { return fbo_.getWidth(); }
+	int getHeight() { return fbo_.getHeight(); }
 
 	void beginMask(bool clear=true);
 	void endMask();
@@ -27,15 +28,18 @@ public:
 	void drawMasker();
 	void drawMaskee();
 
-	ofTexture& getMaskerTexture() { return masker_.getTexture(); }
-	ofTexture& getMaskeeTexture() { return maskee_.getTexture(); }
+	ofTexture& getMaskerTexture() { return fbo_.getTexture(BufferIndex::MASKER); }
+	ofTexture& getMaskeeTexture() { return fbo_.getTexture(BufferIndex::MASKEE); }
 
 private:
-	ofFbo masker_, maskee_;
+	enum BufferIndex : int {
+		MASKER = 0,
+		MASKEE = 1
+	};
+	ofFbo fbo_;
 	ofShader shader_;
 	float vertices_[8];
 	float tex_coords_[8];
-	float width_, height_;
 };
 
 /* EOF */
