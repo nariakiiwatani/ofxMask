@@ -3,7 +3,23 @@
 #include "ofFbo.h"
 #include "ofShader.h"
 
-class ofxMask : public ofBaseDraws
+namespace ofx { namespace mask {
+class Shader : public ofShader
+{
+public:
+	void begin(const ofTexture &masker, const ofTexture &maskee);
+};
+class AlphaShader : public Shader
+{
+public:
+	AlphaShader();
+};
+class LuminanceShader : public Shader
+{
+public:
+	LuminanceShader();
+};
+class Fbo : public ofBaseDraws
 {
 public:
 	enum Type
@@ -47,8 +63,11 @@ private:
 		MASKEE = 1
 	};
 	ofFbo fbo_;
-	ofShader shader_;
+	Shader *shader_ = nullptr;
 	float tex_coords_[8];
 };
-
+}}
+using ofxMask = ofx::mask::Fbo;
+using ofxMaskAlphaShader = ofx::mask::AlphaShader;
+using ofxMaskLuminanceShader = ofx::mask::LuminanceShader;
 /* EOF */
