@@ -3,7 +3,7 @@
 #include "ofFbo.h"
 #include "ofShader.h"
 
-class ofxMask
+class ofxMask : public ofBaseDraws
 {
 public:
 	enum Type
@@ -12,9 +12,8 @@ public:
 		LUMINANCE
 	};
 	void allocate(int width, int height, Type type);
-	void setup(int width, int height, Type type);
-	int getWidth() { return fbo_.getWidth(); }
-	int getHeight() { return fbo_.getHeight(); }
+	float getWidth() const { return fbo_.getWidth(); }
+	float getHeight() const { return fbo_.getHeight(); }
 
 	void beginMask(bool clear=true);
 	void endMask();
@@ -23,14 +22,25 @@ public:
 	void begin(bool clear=true);
 	void end();
 
-	void draw();
-	
-	void drawMasker();
-	void drawMaskee();
+	void draw() const;
+	void draw(float x, float y) const;
+	void draw(float x, float y, float w, float h) const;
 
+	void drawMasker() const;
+	void drawMasker(float x, float y) const;
+	void drawMasker(float x, float y, float w, float h) const;
+	void drawMaskee() const;
+	void drawMaskee(float x, float y) const;
+	void drawMaskee(float x, float y, float w, float h) const;
+	
 	ofTexture& getMaskerTexture() { return fbo_.getTexture(BufferIndex::MASKER); }
 	ofTexture& getMaskeeTexture() { return fbo_.getTexture(BufferIndex::MASKEE); }
-
+	const ofTexture& getMaskerTexture() const { return fbo_.getTexture(BufferIndex::MASKER); }
+	const ofTexture& getMaskeeTexture() const { return fbo_.getTexture(BufferIndex::MASKEE); }
+	
+	// deprecated
+	OF_DEPRECATED_MSG("Use allocate instead",void setup(int width, int height, Type type));	
+	
 private:
 	enum BufferIndex : int {
 		MASKER = 0,
@@ -38,7 +48,6 @@ private:
 	};
 	ofFbo fbo_;
 	ofShader shader_;
-	float vertices_[8];
 	float tex_coords_[8];
 };
 

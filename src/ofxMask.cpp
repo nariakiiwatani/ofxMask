@@ -2,7 +2,7 @@
 #include "ofGraphics.h"
 
 namespace {
-void makeVertices(float *dst, ofTextureData& texture_data)
+void makeVertices(float *dst, const ofTextureData& texture_data) 
 {
 	dst[0] =
 	dst[1] =
@@ -13,7 +13,18 @@ void makeVertices(float *dst, ofTextureData& texture_data)
 	dst[5] =
 	dst[7] = texture_data.height;
 }
-void makeTexCoords(float *dst, ofTextureData& texture_data)
+void makeVertices(float *dst, float x, float y, float w, float h) 
+{
+	dst[0] =
+	dst[6] = x;
+	dst[1] =
+	dst[3] = y;
+	dst[2] =
+	dst[4] = w;
+	dst[5] =
+	dst[7] = h;
+}
+void makeTexCoords(float *dst, const ofTextureData& texture_data)
 {
 	dst[0] =
 	dst[1] =
@@ -36,6 +47,10 @@ void makeTexCoords(float *dst, ofTextureData& texture_data)
 }
 }
 void ofxMask::setup(int width, int height, Type type)
+{
+	allocate(width, height, type);
+}
+void ofxMask::allocate(int width, int height, Type type)
 {
 #define _S(a) #a
 	switch(type) {
@@ -76,7 +91,6 @@ void ofxMask::setup(int width, int height, Type type)
 	s.internalformat = GL_RGBA;
 	fbo_.allocate(s);
 	makeTexCoords(tex_coords_, fbo_.getTexture().getTextureData());
-	makeVertices(vertices_, fbo_.getTexture().getTextureData());
 }
 
 void ofxMask::beginMask(bool clear)
@@ -115,37 +129,63 @@ void ofxMask::end()
 	fbo_.end();
 }
 
-void ofxMask::draw()
+void ofxMask::draw() const
 {
+	draw(0,0);
+}
+
+void ofxMask::draw(float x, float y) const
+{
+	draw(x,y,getWidth(),getHeight());
+}
+void ofxMask::draw(float x, float y, float w, float h) const
+{
+	float vertices[8];
+	makeVertices(vertices, x,y,w,h);
 	ofPushStyle();
-	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+//	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	shader_.begin();
 	shader_.setUniformTexture("masker", getMaskerTexture(), 0);
 	shader_.setUniformTexture("maskee", getMaskeeTexture(), 1);
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_ );
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_);
 	glEnableClientState(GL_VERTEX_ARRAY);		
-	glVertexPointer(2, GL_FLOAT, 0, vertices_ );
-	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	glVertexPointer(2, GL_FLOAT, 0, vertices);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	shader_.end();
 	ofPopStyle();
 }
 
-void ofxMask::drawMasker()
+
+void ofxMask::drawMasker() const
+{
+	drawMasker(0,0);
+}
+void ofxMask::drawMasker(float x, float y) const
+{
+	drawMasker(x,y,getWidth(),getHeight());
+}
+void ofxMask::drawMasker(float x, float y, float w, float h) const
 {
 	ofPushStyle();
-	fbo_.setDefaultTextureIndex(BufferIndex::MASKER);
-	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	fbo_.draw(0,0,fbo_.getWidth(),fbo_.getHeight());
+//	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	getMaskerTexture().draw(x,y,w,h);
 	ofPopStyle();
 }
-void ofxMask::drawMaskee()
+void ofxMask::drawMaskee() const
+{
+	drawMaskee(0,0);
+}
+void ofxMask::drawMaskee(float x, float y) const
+{
+	drawMaskee(x,y,getWidth(),getHeight());
+}
+void ofxMask::drawMaskee(float x, float y, float w, float h) const
 {
 	ofPushStyle();
-	fbo_.setDefaultTextureIndex(BufferIndex::MASKEE);
-	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	fbo_.draw(0,0,fbo_.getWidth(),fbo_.getHeight());
+//	glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	getMaskeeTexture().draw(x,y,w,h);
 	ofPopStyle();
 }
 

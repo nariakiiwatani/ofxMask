@@ -4,7 +4,7 @@
 ofxMask mask_;
 //--------------------------------------------------------------
 void ofApp::setup(){
-	mask_.setup(300,300, ofxMask::LUMINANCE);
+	mask_.allocate(300,300, ofxMask::LUMINANCE);
 	mask_.beginMask();
 	ofDrawCircle(100,100,50);
 	ofDrawCircle(200,100,50);
