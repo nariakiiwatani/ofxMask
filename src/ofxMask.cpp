@@ -92,9 +92,7 @@ void ofxMask::setup(int width, int height, Type type)
 }
 void ofxMask::allocate(int width, int height, Type type)
 {
-	if(shader_ != nullptr) {
-		delete shader_;
-	}
+	destroyShader();
 	switch(type) {
 		case ALPHA:		shader_ = new AlphaShader();		break;
 		case LUMINANCE:	shader_ = new LuminanceShader();	break;
