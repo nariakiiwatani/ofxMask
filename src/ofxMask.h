@@ -28,6 +28,7 @@ public:
 		LUMINANCE
 	};
 	~Fbo() { destroyShader(); }
+	void allocate(const ofFbo::Settings &settings, Type type);
 	void allocate(int width, int height, Type type);
 	float getWidth() const { return fbo_.getWidth(); }
 	float getHeight() const { return fbo_.getHeight(); }
@@ -56,7 +57,9 @@ public:
 	const ofTexture& getMaskeeTexture() const { return fbo_.getTexture(BufferIndex::MASKEE); }
 	
 	// deprecated
-	OF_DEPRECATED_MSG("Use allocate instead",void setup(int width, int height, Type type));	
+	OF_DEPRECATED_MSG("Use allocate instead",void setup(int width, int height, Type type){
+		allocate(width, height, type);
+	});	
 	
 private:
 	enum BufferIndex : int {

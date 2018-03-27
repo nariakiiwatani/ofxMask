@@ -86,12 +86,10 @@ void makeTexCoords(float *dst, const ofTextureData& texture_data)
 	}
 }
 }
-void ofxMask::setup(int width, int height, Type type)
+
+void ofxMask::allocate(const ofFbo::Settings &settings, Type type)
 {
-	allocate(width, height, type);
-}
-void ofxMask::allocate(int width, int height, Type type)
-{
+	fbo_.allocate(settings);
 	destroyShader();
 	switch(type) {
 		case ALPHA:		shader_ = new AlphaShader();		break;
@@ -100,14 +98,18 @@ void ofxMask::allocate(int width, int height, Type type)
 			ofLogError("ofxMask allocate failed.");
 			break;
 	}
+	makeTexCoords(tex_coords_, fbo_.getTexture().getTextureData());
+}
+
+void ofxMask::allocate(int width, int height, Type type)
+{
 	ofFbo::Settings s;
 	s.width = width;
 	s.height = height;
 	s.numColorbuffers = 2;
 	s.colorFormats = {GL_RGBA, GL_RGBA};
 	s.internalformat = GL_RGBA;
-	fbo_.allocate(s);
-	makeTexCoords(tex_coords_, fbo_.getTexture().getTextureData());
+	allocate(s, type);
 }
 
 void ofxMask::beginMask(bool clear)
