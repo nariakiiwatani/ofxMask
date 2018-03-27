@@ -27,7 +27,6 @@ public:
 		ALPHA,
 		LUMINANCE
 	};
-	~Fbo() { destroyShader(); }
 	void allocate(const ofFbo::Settings &settings, Type type);
 	void allocate(int width, int height, Type type);
 	float getWidth() const { return fbo_.getWidth(); }
@@ -67,14 +66,8 @@ private:
 		MASKEE = 1
 	};
 	ofFbo fbo_;
-	Shader *shader_ = nullptr;
+	std::shared_ptr<Shader> shader_;
 	float tex_coords_[8];
-	void destroyShader() {
-		if(shader_ != nullptr) {
-			delete shader_;
-			shader_ = nullptr;
-		}
-	}
 };
 }}
 using ofxMask = ofx::mask::Fbo;

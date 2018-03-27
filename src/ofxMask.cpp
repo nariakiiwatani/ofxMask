@@ -1,7 +1,9 @@
 #include "ofxMask.h"
 #include "ofGraphics.h"
 
+using namespace std;
 using namespace ofx::mask;
+
 void Shader::begin(const ofTexture &masker, const ofTexture &maskee)
 {
 	ofShader::begin();
@@ -90,10 +92,9 @@ void makeTexCoords(float *dst, const ofTextureData& texture_data)
 void ofxMask::allocate(const ofFbo::Settings &settings, Type type)
 {
 	fbo_.allocate(settings);
-	destroyShader();
 	switch(type) {
-		case ALPHA:		shader_ = new AlphaShader();		break;
-		case LUMINANCE:	shader_ = new LuminanceShader();	break;
+		case ALPHA:		shader_ = make_shared<AlphaShader>();		break;
+		case LUMINANCE:	shader_ = make_shared<LuminanceShader>();	break;
 		default:
 			ofLogError("ofxMask allocate failed.");
 			break;
