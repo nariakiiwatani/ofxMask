@@ -55,11 +55,6 @@ public:
 	const ofTexture& getMaskerTexture() const { return fbo_.getTexture(BufferIndex::MASKER); }
 	const ofTexture& getMaskeeTexture() const { return fbo_.getTexture(BufferIndex::MASKEE); }
 	
-	// deprecated
-	OF_DEPRECATED_MSG("Use allocate instead",void setup(int width, int height, Type type){
-		allocate(width, height, type);
-	});	
-	
 private:
 	enum BufferIndex : int {
 		MASKER = 0,
