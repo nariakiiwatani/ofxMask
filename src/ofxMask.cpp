@@ -91,7 +91,12 @@ void makeTexCoords(float *dst, const ofTextureData& texture_data)
 
 void ofxMask::allocate(const ofFbo::Settings &settings, Type type)
 {
-	fbo_.allocate(settings);
+	ofFbo::Settings s = settings;
+	s.numColorbuffers = 2;
+	s.colorFormats = {GL_RGBA, GL_RGBA};
+	s.internalformat = GL_RGBA;
+
+	fbo_.allocate(s);
 	switch(type) {
 		case ALPHA:		shader_ = make_shared<AlphaShader>();		break;
 		case LUMINANCE:	shader_ = make_shared<LuminanceShader>();	break;
@@ -107,9 +112,6 @@ void ofxMask::allocate(int width, int height, Type type)
 	ofFbo::Settings s;
 	s.width = width;
 	s.height = height;
-	s.numColorbuffers = 2;
-	s.colorFormats = {GL_RGBA, GL_RGBA};
-	s.internalformat = GL_RGBA;
 	allocate(s, type);
 }
 

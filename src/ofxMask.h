@@ -29,6 +29,7 @@ public:
 	};
 	void allocate(const ofFbo::Settings &settings, Type type);
 	void allocate(int width, int height, Type type);
+	bool isAllocated() const { return fbo_.isAllocated(); }
 	float getWidth() const { return fbo_.getWidth(); }
 	float getHeight() const { return fbo_.getHeight(); }
 
